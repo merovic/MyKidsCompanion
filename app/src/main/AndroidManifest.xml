@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".GpsTracker"></service>
+        <service android:name=".GpsTracker"/>
         <service android:name=".LocationService"></service>
     </application>
 

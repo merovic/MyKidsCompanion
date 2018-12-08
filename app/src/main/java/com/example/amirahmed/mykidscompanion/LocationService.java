@@ -40,7 +40,7 @@ public class LocationService extends Service {
                             @Override
                             public void run() {
 
-                                gps = new GpsTracker(getApplicationContext());
+                                gps = new GpsTracker(getApplicationContext(),LocationService.this);
 
                                 if (gps.canGetLocation()) {
 
@@ -48,9 +48,12 @@ public class LocationService extends Service {
                                     longitude = gps.getLongitude();
 
 
-                                    showMessage("location is "+latitude+"and "+longitude);
+                                    showMessage("location is "+latitude+" and "+longitude);
 
-                                }
+                                }else
+                                    {
+                                        showMessage("cant get location");
+                                    }
 
 
                             }

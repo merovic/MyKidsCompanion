@@ -13,6 +13,7 @@ import com.example.amirahmed.mykidscompanion.Fragments.SampleSlide;
 import com.github.paolorotolo.appintro.AppIntro;
 
 public class ConfigurationActivity extends AppIntro {
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,7 @@ public class ConfigurationActivity extends AppIntro {
         // Override bar/separator color.
         setBarColor(Color.parseColor("#3F51B5"));
         setSeparatorColor(Color.parseColor("#2196F3"));
+
 
         // Hide Skip/Done button.
         showSkipButton(false);

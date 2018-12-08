@@ -10,7 +10,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan this QRcode with your Device with Mykids Application"
+        android:text="Scan this QRcode with your Device with Nanoschool Application"
         android:layout_centerHorizontal="true"
         android:textColor="@color/colorAccent"
         android:layout_margin="10dp"

@@ -1,13 +1,17 @@
 package com.example.amirahmed.mykidscompanion;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
     RippleView on,off;
     TinyDB tinydb;
 
+    GpsTracker gps;
+
+    double latitude;
+    double longitude;
+
     TextView statue;
 
     @Override
@@ -29,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         tinydb = new TinyDB(getApplicationContext());
 
-        statue = (TextView) findViewById(R.id.statue);
+        statue = findViewById(R.id.statue);
 
         if(tinydb.getString("statue").equals("On"))
         {
@@ -45,19 +54,42 @@ public class MainActivity extends AppCompatActivity {
                 statue.setText("");
             }
 
-        on = (RippleView) findViewById(R.id.on);
-        off = (RippleView) findViewById(R.id.off);
+        on = findViewById(R.id.on);
+        off = findViewById(R.id.off);
 
         on.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isOnline()) {
-                    startService(new Intent(getApplicationContext(), LocationService.class));
 
-                    tinydb.putString("statue","On");
-                    statue.setText("On");
-                    statue.setTextColor(Color.parseColor("#76FF03"));
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
+                    }else
+                        {
+
+                            startService(new Intent(getApplicationContext(), LocationService.class));
+
+                            /*gps = new GpsTracker(getApplicationContext(), MainActivity.this);
+
+                            if (gps.canGetLocation()) {
+
+                                latitude = gps.getLatitude();
+                                longitude = gps.getLongitude();
+
+
+                                showMessage("location is "+latitude+" and "+longitude);
+
+                            }else
+                            {
+                                gps.showSettingsAlert();
+                            }*/
+
+                            tinydb.putString("statue","On");
+                            statue.setText("On");
+                            statue.setTextColor(Color.parseColor("#76FF03"));
+                        }
 
                 }else
                     {
@@ -77,6 +109,63 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+
+                    // contacts-related task you need to do.
+
+                    startService(new Intent(getApplicationContext(), LocationService.class));
+
+                    /*gps = new GpsTracker(getApplicationContext(), MainActivity.this);
+
+                    if (gps.canGetLocation()) {
+
+                        latitude = gps.getLatitude();
+                        longitude = gps.getLongitude();
+
+
+                        showMessage("location is "+latitude+" and "+longitude);
+
+                    }else
+                    {
+                        gps.showSettingsAlert();
+                    }*/
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                    //showMessage("You need to grant permission");
+                }
+                return;
+            }
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
     public void onBackPressed(){
         Intent a = new Intent(Intent.ACTION_MAIN);
         a.addCategory(Intent.CATEGORY_HOME);
@@ -91,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
